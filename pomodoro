@@ -1,0 +1,35 @@
+#!/bin/bash
+counter=0
+limit=25
+summary=""
+startmessage="$1 pomodoro started. You have 25 minutes."
+endmessage="$1 pomodoro ended. Please stop working and take a short break"
+date_started=`date`
+
+echo "$1 pomodoro started at $date_started"
+notify-send -u critical -i appointment -t 5000 "$startmessage"
+echo
+while [ $counter != $limit ]; do
+   echo "$counter minutes so far...";
+   if [ $counter = 10 ]; then
+      notify-send -u critical -i appointment -t 5000 "Pomodoro: 15 minutes remaining"
+   fi
+   if [ $counter = 20 ]; then
+      notify-send -u critical -i appointment -t 5000 "Pomodoro: 5 minutes remaining"
+   fi
+   sleep 60
+   let "counter = $counter + 1"
+done
+if [ $counter = $limit ]; then
+   echo
+   #notify-send -u critical -i appointment -t 10000 "$endmessage"
+   /usr/games/xcowsay "$endmessage"
+   paplay /usr/share/sounds/freedesktop/stereo/alarm-clock-elapsed.oga
+   echo -e '\a' >&2
+   #write to the log
+   echo "$date_started - `date` $1" >> ~/vimwiki/Pomodoros.md
+   exit 0
+fi
+
+i=0
+
